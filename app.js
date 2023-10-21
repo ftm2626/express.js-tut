@@ -1,31 +1,25 @@
 const express = require("express");
-const { people, products } = require("./data");
+const { products } = require("./data");
 const app = express();
 
 app.get("/", (req, res) => {
-  res.send(
-    '<h1>Api Home Page</h1><a href="/api/products">products</a><br/><a href="/api/names">names</a><br/><a href="/api/people">people</a>'
-  );
-});
-
-app.get("/api/names", (req, res) => {
-  res.json([{ name: "john" }, { name: "jane" }]);
+  res.send('<h1>Api Home Page</h1><a href="/api/products">products</a>');
 });
 
 app.get("/api/products", (req, res) => {
   res.json(products);
 });
 
-app.get("/api/people", (req, res) => {
-  res.json(people);
-});
+// query params -  search params
 
-// product with no description
-app.get("/api/products-no-desc", (req, res) => {
-  const newP = products.map(({ image, id, name }) => {
-    return { id, name, image };
-  });
-  res.json(newP);
+app.get("/api/products/search", (req, res) => {
+  const singleProduct = products.find(({id}) => id === +req.params.productID); 
+  if(singleProduct){
+    res.json(singleProduct);
+
+  }else{
+    res.status(404).send('product not found')
+  }
 });
 
 app.all("*", (req, res) => {
